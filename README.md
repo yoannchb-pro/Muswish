@@ -157,7 +157,7 @@ View:
 Template:
 
 ```
-Shown. {{ [if] person }} Never shown! {{ [end if] }}
+Shown. {{ [if] person }} Never shown! {{ [end if] person }}
 ```
 
 Output:
@@ -179,7 +179,7 @@ View:
 Template:
 
 ```
-{{ [if not] error }} No error! {{ [end if not] }}
+{{ [if not] error }} No error! {{ [end if not] error }}
 ```
 
 Output:
@@ -205,7 +205,7 @@ Template:
 ```html
 {{ [for] stooges }}
 <b>{{ name }}</b>
-{{ [end for] }}
+{{ [end for] stooges }}
 ```
 
 Output:
@@ -231,7 +231,7 @@ Template:
 ```
 {{ [for] musketeers }}
 * {{this}}
-{{ [end for] }}
+{{ [end for] musketeers }}
 ```
 
 Output:
@@ -266,7 +266,7 @@ Template:
 ```
 {{ [for] beatles}}
 * {{ [>] name}}
-{{ [end for] }}
+{{ [end for] beatles }}
 ```
 
 Output:

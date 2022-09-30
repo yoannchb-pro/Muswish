@@ -50,7 +50,10 @@
       open: "FOR",
       close: "END FOR",
       fn: function (_m, template, content, data, originalData, callback) {
-          return getDeepObj(data, content)
+          const items = getDeepObj(data, content);
+          if (!(items instanceof Array))
+              return "";
+          return items
               .map((e) => callback(template, e, originalData))
               .join("\n");
       },
@@ -96,12 +99,13 @@
       },
   };
 
+  //the order is pretty important
   const RULES = {
       DONT_DISPLAY: DONT_DISPLAY,
       COMMENT: COMMENT,
-      FOR: FOR,
       IF: IF,
       IF_NOT: IF_NOT,
+      FOR: FOR,
       ORIGINAL_DATA: ORIGINAL_DATA,
       DATA: DATA,
   };
@@ -109,18 +113,18 @@
   function generateRegex() {
       const regexList = [];
       for (const RULE of Object.values(RULES)) {
-          const START = `${REG.START_CODE}${REG.OPTIONAL_SPACE}`;
-          const END = `${REG.OPTIONAL_SPACE}${REG.END_CODE}`;
+          const START = String.raw `${REG.START_CODE}${REG.OPTIONAL_SPACE}`;
+          const END = String.raw `${REG.OPTIONAL_SPACE}${REG.END_CODE}`;
           const OPENER = RULE.open
-              ? `${REG.INSTRUCTION_START}${REG.OPTIONAL_SPACE}(${RULE.open})${REG.OPTIONAL_SPACE}${REG.INSTRUCTION_END}${REG.OPTIONAL_SPACE}`
-              : `(${RULE.open})`;
+              ? String.raw `${REG.INSTRUCTION_START}${REG.OPTIONAL_SPACE}(${RULE.open})${REG.OPTIONAL_SPACE}${REG.INSTRUCTION_END}${REG.OPTIONAL_SPACE}`
+              : String.raw `(${RULE.open})`;
           const CLOSER = !!RULE.close
-              ? `${REG.INSTRUCTION_START}${REG.OPTIONAL_SPACE}(${RULE.close})${REG.OPTIONAL_SPACE}${REG.INSTRUCTION_END}${REG.OPTIONAL_SPACE}`
+              ? String.raw `${REG.INSTRUCTION_START}${REG.OPTIONAL_SPACE}(${RULE.close})${REG.OPTIONAL_SPACE}${REG.INSTRUCTION_END}${REG.OPTIONAL_SPACE}\2`
               : false;
-          const CONTENT = `(${REG.CONTENT})`;
+          const CONTENT = String.raw `(${REG.CONTENT})`;
           regexList.push(CLOSER
-              ? `${START}${OPENER}${CONTENT}${END}\n?(${REG.CONTENT_MULTILINE})\n?${START}${CLOSER}${END}`
-              : `${START}${OPENER}${CONTENT}${END}\n?`);
+              ? String.raw `${START}${OPENER}${CONTENT}${END}\n?(${REG.CONTENT_MULTILINE})\n?${START}${CLOSER}${END}`
+              : String.raw `${START}${OPENER}${CONTENT}${END}\n?`);
       }
       return regexList.map((e) => new RegExp(e, "gim"));
   }

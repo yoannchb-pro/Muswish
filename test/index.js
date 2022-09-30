@@ -5,39 +5,31 @@ console.log(
     `
 {{ [if] error }}
 Something went wrong
-{{ [end if] }}
+{{ [end if] error }}
 {{ [@@] this is a comment }}
 {{ [if not] error }}
 {{ this.noerror }}
-{{ [end if not] }}
-{{ [@@] 
-I m  a comment
-With multilines
-}}
-{{ name }} has chance to love {{ [!!] {{ fruits }} }}:
+{{ [end if not] error }}
+{{ name }} has chance to love :
 {{ [for] items }}
     - {{ name }} with {{ prc }}%
-{{ [end for] }}
-{{ [!!] 
-{{ [for] items }}
-    - {{ name }} with {{ prc }}%
-{{ [end for] }}
-}}
+{{ [end for] items }}
 
 {{ [for] items }}
 * {{[>] name}} said : {{ [>] computedName }}
-{{ [end for] }}
+{{ [end for] items }}
 
 List of fruits:
 {{ [for] fruits }}
     - {{ this }}
-{{ [end for] }}
+{{ [end for] fruits }}
 
+{{ [for] list }}
 {{ [for] fruits }}
-{{ [for] items }}
 - this message should be display 2 * 2 = 4 times
-{{ [end for] }}}}
-{{ [end for] }}
+{{ [end for] fruits }}
+{{ [end for] list }}
+
     `,
     {
       items: [
@@ -45,6 +37,10 @@ List of fruits:
         { name: "Apple", prc: 50 },
       ],
       fruits: ["Banana", "Apple"],
+      list: [
+        { name: "Banana", prc: 80, fruits: ["Banana", "Apple"] },
+        { name: "Apple", prc: 50, fruits: ["Banana", "Apple"] },
+      ],
       noerror: "All is going fine",
       name: "Yoann",
       computedName: function () {

@@ -20,14 +20,15 @@ export type RULE = {
   ) => string;
 };
 
+//the order is pretty important
 const RULES: {
   [key: string]: RULE;
 } = {
   DONT_DISPLAY: DONT_DISPLAY,
   COMMENT: COMMENT,
-  FOR: FOR,
   IF: IF,
   IF_NOT: IF_NOT,
+  FOR: FOR,
   ORIGINAL_DATA: ORIGINAL_DATA,
   DATA: DATA,
 };

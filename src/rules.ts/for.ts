@@ -13,7 +13,9 @@ const FOR: RULE = {
     originalData: Data,
     callback: Function
   ) {
-    return getDeepObj(data, content)
+    const items = getDeepObj(data, content);
+    if (!(items instanceof Array)) return "";
+    return items
       .map((e: Data) => callback(template, e, originalData))
       .join("\n");
   },
