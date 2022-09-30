@@ -1,0 +1,36 @@
+{
+  "name": "muswish",
+  "version": "1.0.0",
+  "description": "Muswish templating language",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "test": "node ./test/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yoannchb-pro/Muswish.git"
+  },
+  "keywords": [
+    "muswish",
+    "template",
+    "templating",
+    "language",
+    "code",
+    "fast",
+    "ejs"
+  ],
+  "author": "yoannchb",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yoannchb-pro/Muswish/issues"
+  },
+  "homepage": "https://github.com/yoannchb-pro/Muswish#readme",
+  "devDependencies": {
+    "rollup-plugin-ts": "^3.0.2"
+  }
+}
