@@ -9,17 +9,15 @@
 <body>
     <h1>Hi! My name is {{ name }} and I love {{ love }}</h1>
     {{ notShow }}
-
     {{ [if] error }}
     <h2>Oh no something went wrong !</h2>
     {{ [end if] error }}
-
+    {{ [if not] error }}<h2>No error !</h2>{{ [end if not] error }}
     {{ [@@] comment }}
     {{ [@@] 
         We are testing for
         See below
     }}
-
     <p>I also love:</p>
     <ul>
         {{ [for] items }}

@@ -9,8 +9,8 @@
       END_CODE: String.raw `}}`,
       CONTENT: String.raw `[^\[\]]+?`,
       CONTENT_MULTILINE: String.raw `[\s\S]*?`,
-      OPTIONAL_SPACE: String.raw `[\s\t]*`,
-      OPTIONAL_SPACE_MULTILINE: String.raw `[\s\t\n]*`,
+      OPTIONAL_SPACE: String.raw `[ \t]*`,
+      OPTIONAL_SPACE_MULTILINE: String.raw `[\s\t]*`,
       INSTRUCTION_START: String.raw `\[`,
       INSTRUCTION_END: String.raw `\]`,
   };
@@ -38,6 +38,7 @@
   const IF = {
       open: "IF",
       close: "END IF",
+      matchNewLine: true,
       fn: function (_m, template, content, data, originalData, callback) {
           const value = getDeepObj(data, content);
           if (value && template) {
@@ -63,6 +64,7 @@
   const IF_NOT = {
       open: "IF NOT",
       close: "END IF NOT",
+      matchNewLine: true,
       fn: function (_m, template, content, data, originalData, callback) {
           const value = getDeepObj(data, content);
           if (!value && template) {
@@ -89,6 +91,7 @@
   const COMMENT = {
       open: "@@",
       multilines: true,
+      matchNewLine: true,
       fn: function (_m, template, content, data) {
           return "";
       },
@@ -110,6 +113,7 @@
           const SPACE = RULE.multilines
               ? REG.OPTIONAL_SPACE_MULTILINE
               : REG.OPTIONAL_SPACE;
+          const NEW_LINE = RULE.matchNewLine ? String.raw `[ \t\n]*` : "";
           const START = String.raw `${REG.START_CODE}${SPACE}`;
           const END = String.raw `${SPACE}${REG.END_CODE}`;
           const OPENER = RULE.open
@@ -120,8 +124,8 @@
               : false;
           const CONTENT = String.raw `(${REG.CONTENT})`;
           regexList.push(CLOSER
-              ? String.raw `${START}${OPENER}${CONTENT}${END}\n?(${REG.CONTENT_MULTILINE})\n?${START}${CLOSER}${END}`
-              : String.raw `${START}${OPENER}${CONTENT}${END}\n?`);
+              ? String.raw `${NEW_LINE}${REG.OPTIONAL_SPACE}${START}${OPENER}${CONTENT}${END}\n*(${REG.CONTENT_MULTILINE})\s*${START}${CLOSER}${END}${REG.OPTIONAL_SPACE}`
+              : String.raw `${NEW_LINE}${START}${OPENER}${CONTENT}${END}`);
       }
       return regexList.map((e) => new RegExp(e, "gim"));
   }

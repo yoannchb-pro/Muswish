@@ -3,7 +3,7 @@ const path = require("path");
 const muswish = require("../dist/index");
 
 const content = fs.readFileSync(
-  path.resolve(__dirname, "./template.html"),
+  path.resolve(__dirname, "./template.muswish"),
   "utf-8"
 );
 
@@ -21,5 +21,7 @@ const output = muswish(content, {
     return this.firstName + " " + this.lastName;
   },
 });
+
+console.log("-- template --", content, "-- output --", output, "-- end --");
 
 fs.writeFileSync(path.resolve(__dirname, "./output.html"), output, "utf-8");

@@ -23,7 +23,7 @@ Something went wrong
 
 List of fruits:
 {{ [for] fruits }}
-    - {{ this }}
+    - {{ this }} -
 {{ [end for] fruits }}
 
 {{ [for] list }}

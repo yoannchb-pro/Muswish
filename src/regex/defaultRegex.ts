@@ -5,8 +5,8 @@ const REG: { [key: string]: string } = {
   CONTENT: String.raw`[^\[\]]+?`,
   CONTENT_MULTILINE: String.raw`[\s\S]*?`,
 
-  OPTIONAL_SPACE: String.raw`[\s\t]*`,
-  OPTIONAL_SPACE_MULTILINE: String.raw`[\s\t\n]*`,
+  OPTIONAL_SPACE: String.raw`[ \t]*`,
+  OPTIONAL_SPACE_MULTILINE: String.raw`[\s\t]*`,
 
   INSTRUCTION_START: String.raw`\[`,
   INSTRUCTION_END: String.raw`\]`,

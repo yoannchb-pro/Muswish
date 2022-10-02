@@ -362,6 +362,7 @@ export type RULE = {
   open: string;
   close?: string;
   multilines?: boolean;
+  matchNewLine: boolean;
   fn: (
     _m: string,
     template: string,

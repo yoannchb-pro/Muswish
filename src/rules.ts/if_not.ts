@@ -5,6 +5,7 @@ import { Data } from "../utils/dataType";
 const IF_NOT: RULE = {
   open: "IF NOT",
   close: "END IF NOT",
+  matchNewLine: true,
   fn: function (
     _m: string,
     template: string,

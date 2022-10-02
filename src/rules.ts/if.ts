@@ -5,6 +5,7 @@ import { Data } from "../utils/dataType";
 const IF: RULE = {
   open: "IF",
   close: "END IF",
+  matchNewLine: true,
   fn: function (
     _m: string,
     template: string,
