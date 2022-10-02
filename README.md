@@ -18,6 +18,12 @@ You can use it to render muswish templates anywhere you can use JavaScript. This
 $ npm install muswish --save
 ```
 
+CDN
+
+```html
+<script src="https://unpkg.com/muswish@1.0.0/dist/index.js"></script>
+```
+
 ## Usage
 
 Below is a quick example how to use:
