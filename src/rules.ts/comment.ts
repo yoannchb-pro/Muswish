@@ -3,9 +3,13 @@ import { Data } from "../utils/dataType";
 
 const COMMENT: RULE = {
   open: "@@",
-  multilines: true,
-  matchNewLine: true,
-  fn: function (_m: string, template: string, content: string, data: Data) {
+  fn: function (
+    _m: string,
+    template: string,
+    spaceStart: string,
+    content: string,
+    data: Data
+  ) {
     return "";
   },
 };

@@ -4,8 +4,15 @@ import { Data } from "../utils/dataType";
 
 const DATA: RULE = {
   open: "",
-  fn: function (_m: string, template: string, content: string, data: Data) {
-    return getDeepObj(data, content);
+  fn: function (
+    _m: string,
+    template: string,
+    spaceStart: string,
+    content: string,
+    data: Data
+  ) {
+    const item = getDeepObj(data, content);
+    return item ? spaceStart + item : item;
   },
 };
 

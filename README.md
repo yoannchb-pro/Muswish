@@ -1,7 +1,5 @@
 # Muswish
 
-> This project still in construction !
-
 Muswish is a new templating language writted in javascript without any dependencies
 
 ## Inspiration
@@ -339,37 +337,73 @@ muswish.addPlugin("for", {
   close: "END FOR",
   fn: function (
     _m: string,
-    template: string, //text content
-    content: string, //for content {{ [for] guys }} -> guys
-    data: Data, //current data of the item if we are in a for as example
-    originalData: Data, //original data
-    callback: Function //call muswish function
+    template: string,
+    spaceStart: string,
+    content: string,
+    data: Data, //actual data, if we are in a for it's the current item
+    originalData: Data, //original data (not the current item)
+    callback: Function //refer to muswish function for recursivity
   ) {
-    //allow you to get the element with the path
     const items = getDeepObj(data, content);
-    if (!(items instanceof Array)) return "";
-    return items
-      .map((e: Data) => callback(template, e, originalData))
-      .join("\n");
+    if (!(items instanceof Array) || items.length === 0) return "";
+    return (
+      keepOnlyNewLine(spaceStart) +
+      items.map((e: Data) => callback(template, e, originalData)).join("\n")
+    );
   },
-});
+};);
 ```
 
-type
+type:
 
 ```ts
 export type RULE = {
   open: string;
   close?: string;
-  multilines?: boolean;
-  matchNewLine: boolean;
   fn: (
     _m: string,
     template: string,
+    spaceStart: string,
     content: string,
     data: Data,
     originalData: Data,
     callback: Function
   ) => string;
 };
+```
+
+example:
+
+```
+  {{ [for] items }}
+    <p>{{ this }}</p>
+  {{ [end for] items }}
+```
+
+will give:
+
+- \_m
+
+```
+  {{ [for] items }}
+    <p>{{ this }}</p>
+  {{ [end for] items }}
+```
+
+- template
+
+```
+    <p>{{ this }}</p>
+```
+
+- spaceStart
+
+```
+\n\t
+```
+
+- content
+
+```
+items
 ```

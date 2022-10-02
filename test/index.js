@@ -30,7 +30,8 @@ List of fruits:
 {{ [for] fruits }}
 - this message should be display 2 * 2 = 4 times
 {{ [end for] fruits }}
-{{ [end for] list }}`;
+{{ [end for] list }}
+{{ items[0].name }}`;
 
 console.log(
   "-- template --",

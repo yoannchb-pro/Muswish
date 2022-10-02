@@ -5,10 +5,10 @@ import { Data } from "../utils/dataType";
 const IF_NOT: RULE = {
   open: "IF NOT",
   close: "END IF NOT",
-  matchNewLine: true,
   fn: function (
     _m: string,
     template: string,
+    spaceStart: string,
     content: string,
     data: Data,
     originalData: Data,
@@ -16,7 +16,7 @@ const IF_NOT: RULE = {
   ) {
     const value = getDeepObj(data, content);
     if (!value && template) {
-      return callback(template, data);
+      return spaceStart + callback(template, data);
     }
     return "";
   },

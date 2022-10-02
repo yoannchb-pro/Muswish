@@ -9,11 +9,10 @@ import { Data } from "../utils/dataType";
 export type RULE = {
   open: string;
   close?: string;
-  multilines?: boolean;
-  matchNewLine?: boolean;
   fn: (
     _m: string,
     template: string,
+    spaceStart: string,
     content: string,
     data: Data,
     originalData: Data,

@@ -7,11 +7,13 @@ const ORIGINAL_DATA: RULE = {
   fn: function (
     _m: string,
     template: string,
+    spaceStart: string,
     content: string,
     data: Data,
     originalData: Data
   ) {
-    return getDeepObj(originalData, content, data);
+    const item = getDeepObj(originalData, content, data);
+    return item ? spaceStart + item : item;
   },
 };
 

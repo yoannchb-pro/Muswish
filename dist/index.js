@@ -7,10 +7,10 @@
   const REG = {
       START_CODE: String.raw `{{`,
       END_CODE: String.raw `}}`,
-      CONTENT: String.raw `[^\[\]]+?`,
-      CONTENT_MULTILINE: String.raw `[\s\S]*?`,
+      CONTENT: String.raw `[\s\S]*?`,
       OPTIONAL_SPACE: String.raw `[ \t]*`,
       OPTIONAL_SPACE_MULTILINE: String.raw `[\s\t]*`,
+      SPACE_START: String.raw `(?:\n[\t ]*)?`,
       INSTRUCTION_START: String.raw `\[`,
       INSTRUCTION_END: String.raw `\]`,
   };
@@ -38,37 +38,38 @@
   const IF = {
       open: "IF",
       close: "END IF",
-      matchNewLine: true,
-      fn: function (_m, template, content, data, originalData, callback) {
+      fn: function (_m, template, spaceStart, content, data, originalData, callback) {
           const value = getDeepObj(data, content);
           if (value && template) {
-              return callback(template, data);
+              return spaceStart + callback(template, data);
           }
           return "";
       },
   };
 
+  function keepOnlyNewLine(spaceStart) {
+      return spaceStart.includes("\n") ? "\n" : spaceStart;
+  }
+
   const FOR = {
       open: "FOR",
       close: "END FOR",
-      fn: function (_m, template, content, data, originalData, callback) {
+      fn: function (_m, template, spaceStart, content, data, originalData, callback) {
           const items = getDeepObj(data, content);
-          if (!(items instanceof Array))
+          if (!(items instanceof Array) || items.length === 0)
               return "";
-          return items
-              .map((e) => callback(template, e, originalData))
-              .join("\n");
+          return (keepOnlyNewLine(spaceStart) +
+              items.map((e) => callback(template, e, originalData)).join("\n"));
       },
   };
 
   const IF_NOT = {
       open: "IF NOT",
       close: "END IF NOT",
-      matchNewLine: true,
-      fn: function (_m, template, content, data, originalData, callback) {
+      fn: function (_m, template, spaceStart, content, data, originalData, callback) {
           const value = getDeepObj(data, content);
           if (!value && template) {
-              return callback(template, data);
+              return spaceStart + callback(template, data);
           }
           return "";
       },
@@ -76,23 +77,23 @@
 
   const DATA = {
       open: "",
-      fn: function (_m, template, content, data) {
-          return getDeepObj(data, content);
+      fn: function (_m, template, spaceStart, content, data) {
+          const item = getDeepObj(data, content);
+          return item ? spaceStart + item : item;
       },
   };
 
   const ORIGINAL_DATA = {
       open: ">",
-      fn: function (_m, template, content, data, originalData) {
-          return getDeepObj(originalData, content, data);
+      fn: function (_m, template, spaceStart, content, data, originalData) {
+          const item = getDeepObj(originalData, content, data);
+          return item ? spaceStart + item : item;
       },
   };
 
   const COMMENT = {
       open: "@@",
-      multilines: true,
-      matchNewLine: true,
-      fn: function (_m, template, content, data) {
+      fn: function (_m, template, spaceStart, content, data) {
           return "";
       },
   };
@@ -110,31 +111,28 @@
   function generateRegex() {
       const regexList = [];
       for (const RULE of Object.values(RULES)) {
-          const SPACE = RULE.multilines
-              ? REG.OPTIONAL_SPACE_MULTILINE
-              : REG.OPTIONAL_SPACE;
-          const NEW_LINE = RULE.matchNewLine ? String.raw `[ \t\n]*` : "";
+          const SPACE = REG.OPTIONAL_SPACE_MULTILINE;
           const START = String.raw `${REG.START_CODE}${SPACE}`;
           const END = String.raw `${SPACE}${REG.END_CODE}`;
           const OPENER = RULE.open
               ? String.raw `${REG.INSTRUCTION_START}${SPACE}(${RULE.open})${SPACE}${REG.INSTRUCTION_END}${SPACE}`
               : String.raw `(${RULE.open})`;
           const CLOSER = !!RULE.close
-              ? String.raw `${REG.INSTRUCTION_START}${SPACE}(${RULE.close})${SPACE}${REG.INSTRUCTION_END}${SPACE}\2`
+              ? String.raw `${REG.INSTRUCTION_START}${SPACE}(${RULE.close})${SPACE}${REG.INSTRUCTION_END}${SPACE}\3`
               : false;
           const CONTENT = String.raw `(${REG.CONTENT})`;
           regexList.push(CLOSER
-              ? String.raw `${NEW_LINE}${REG.OPTIONAL_SPACE}${START}${OPENER}${CONTENT}${END}\n*(${REG.CONTENT_MULTILINE})\s*${START}${CLOSER}${END}${REG.OPTIONAL_SPACE}`
-              : String.raw `${NEW_LINE}${START}${OPENER}${CONTENT}${END}`);
+              ? String.raw `(${REG.SPACE_START})${START}${OPENER}${CONTENT}${END}\n*(${REG.CONTENT})\s*${START}${CLOSER}${END}`
+              : String.raw `(${REG.SPACE_START})${START}${OPENER}${CONTENT}${END}`);
       }
       return regexList.map((e) => new RegExp(e, "gim"));
   }
 
   function muswish(template, data, originalData) {
-      return muswish.TEMPLATING_REG.reduce((a, b) => (a = a.replace(b, function (_match, opener, content, template, close) {
+      return muswish.TEMPLATING_REG.reduce((a, b) => (a = a.replace(b, function (_match, spaceStart, opener, content, template, close) {
           const handler = Object.values(RULES).find((e) => { var _a; return ((_a = e.open) === null || _a === void 0 ? void 0 : _a.toLowerCase()) == (opener === null || opener === void 0 ? void 0 : opener.toLowerCase()); });
           if (handler) {
-              return handler.fn(_match, template, content, data, originalData !== null && originalData !== void 0 ? originalData : data, muswish);
+              return handler.fn(_match, template, spaceStart, content, data, originalData !== null && originalData !== void 0 ? originalData : data, muswish);
           }
           return _match;
       })), template);

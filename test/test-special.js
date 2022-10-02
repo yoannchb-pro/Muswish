@@ -1,49 +1,8 @@
+const fs = require("fs");
+const path = require("path");
 const muswish = require("../dist");
 
-console.log(
-  muswish(
-    `Hi! My name is {{ name }} and I love {{ love }}
-    {{ notShow }}
-
-    {{ [if] error }}
-    Oh no something went wrong !
-    {{ [end if] error }}
-
-    {{ [@@] comment }}
-    {{ [@@] 
-        We are testing for
-        See below
-    }}
-
-    I also love:
-        {{ [for] items }}
-        {{ this }}
-        {{ [end for] items }}
-
-    And my friends are:
-    {{ [for] friends }}
-        {{ [>] friendNameFn }}
-    {{ [end for] friends }}`,
-    {
-      title: "Template output",
-      name: "Muswish",
-      love: ["html", "css", "js"],
-      error: false,
-      items: ["Banana", "Apple"],
-      friends: [
-        { firstName: "Yoann", lastName: "CHB" },
-        { firstName: "Elia", lastName: "AM" },
-      ],
-      friendNameFn: function () {
-        return this.firstName + " " + this.lastName;
-      },
-    }
-  )
-);
-
-console.log(
-  muswish(
-    `<!DOCTYPE html>
+const text = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -54,6 +13,7 @@ console.log(
 <body>
     <h1>Hi! My name is {{ name }} and I love {{ love }}</h1>
     {{ notShow }}
+    {{name}}
     {{ [if] error }}
     <h2>Oh no something went wrong !</h2>
     {{ [end if] error }}
@@ -77,20 +37,25 @@ console.log(
     {{ [end for] friends }}
     </textarea>
 </body>
-</html>`,
-    {
-      title: "Template output",
-      name: "Muswish",
-      love: ["html", "css", "js"],
-      error: false,
-      items: ["Banana", "Apple"],
-      friends: [
-        { firstName: "Yoann", lastName: "CHB" },
-        { firstName: "Elia", lastName: "AM" },
-      ],
-      friendNameFn: function () {
-        return this.firstName + " " + this.lastName;
-      },
-    }
-  )
-);
+</html>`;
+
+const result = muswish(text, {
+  title: "Template output",
+  name: "Muswish",
+  love: ["html", "css", "js"],
+  error: false,
+  items: ["Banana", "Apple"],
+  friends: [
+    { firstName: "Yoann", lastName: "CHB" },
+    { firstName: "Elia", lastName: "AM" },
+  ],
+  friendNameFn: function () {
+    return this.firstName + " " + this.lastName;
+  },
+});
+
+console.log(text, result);
+
+fs.writeFileSync(path.resolve(__dirname, "output-special.html"), result, {
+  encoding: "utf-8",
+});

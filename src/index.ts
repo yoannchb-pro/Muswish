@@ -10,6 +10,7 @@ function muswish(template: string, data: any, originalData?: any): string {
         b,
         function (
           _match: string,
+          spaceStart: string,
           opener: string,
           content: string,
           template: string,
@@ -22,6 +23,7 @@ function muswish(template: string, data: any, originalData?: any): string {
             return handler.fn(
               _match,
               template,
+              spaceStart,
               content,
               data,
               originalData ?? data,
