@@ -1,38 +1,35 @@
 const muswish = require("../dist/index");
 
+muswish.customDelimiters("<%", "%>");
 console.log(
   muswish(
     `
-{{ [if] error }}
+<% [if] error %>
 Something went wrong
-{{ [end if] error }}
-{{ [@@] this is a comment }}
-{{ [@@] 
-  this is a comment 
-  on multiples lines
-}}
-{{ [if not] error }}
-{{ this.noerror }}
-{{ [end if not] error }}
-{{ name }} has chance to love :
-{{ [for] items }}
-    - {{ name }} with {{ prc }}%
-{{ [end for] items }}
+<% [end if] error %>
+<% [@@] this is a comment %>
+<% [if not] error %>
+<% this.noerror %>
+<% [end if not] error %>
+<% name %> has chance to love :
+<% [for] items %>
+    - <% name %> with <% prc %>%
+<% [end for] items %>
 
-{{ [for] items }}
-* {{[>] name}} said : {{ [>] computedName }}
-{{ [end for] items }}
+<% [for] items %>
+* <%[>] name%> said : <% [>] computedName %>
+<% [end for] items %>
 
 List of fruits:
-{{ [for] fruits }}
-    - {{ this }}
-{{ [end for] fruits }}
+<% [for] fruits %>
+    - <% this %>
+<% [end for] fruits %>
 
-{{ [for] list }}
-{{ [for] fruits }}
+<% [for] list %>
+<% [for] fruits %>
 - this message should be display 2 * 2 = 4 times
-{{ [end for] fruits }}
-{{ [end for] list }}
+<% [end for] fruits %>
+<% [end for] list %>
 
     `,
     {

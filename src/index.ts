@@ -1,10 +1,10 @@
 import generateRegex from "./regex/builder";
+import REG from "./regex/defaultRegex";
 import RULES from "./rules.ts";
+import { RULE } from "./rules.ts/index";
 
-const TEMPLATING_REG = generateRegex();
-
-function muswish(template: string, data: any, originalData?: any) {
-  return TEMPLATING_REG.reduce(
+function muswish(template: string, data: any, originalData?: any): string {
+  return muswish.TEMPLATING_REG.reduce(
     (a, b) =>
       (a = a.replace(
         b,
@@ -34,5 +34,18 @@ function muswish(template: string, data: any, originalData?: any) {
     template
   );
 }
+
+muswish.TEMPLATING_REG = generateRegex();
+
+muswish.addPlugin = function (name: string, rule: RULE) {
+  RULES[name] = rule;
+  muswish.TEMPLATING_REG = generateRegex();
+};
+
+muswish.customDelimiters = function (opener: string, closer: string) {
+  REG.START_CODE = opener;
+  REG.END_CODE = closer;
+  muswish.TEMPLATING_REG = generateRegex();
+};
 
 export default muswish;

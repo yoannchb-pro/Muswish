@@ -85,7 +85,7 @@ fetch("template.muswish")
 
 The most basic tag type is a simple variable. A `{{name}}` tag renders the value of the `name` key in the current context. If there is no such key, nothing is rendered.
 
-If you want `{{name}}` _not_ to be interpreted as a muswish tag, but rather to appear exactly as `{{name}}` in the output, you can use `{{ [!!] {{name}} }}`
+If you want `{{name}}` _not_ to be interpreted as a muswish tag, but rather to appear exactly as `{{name}}` in the output, you can custom the delimiters (see below);
 
 View:
 
@@ -102,7 +102,6 @@ Template:
 * {{name}}
 * {{age}}
 * {{company}}
-* {{ [!!] {{company}} }}
 ```
 
 Output:
@@ -111,7 +110,6 @@ Output:
 * Yoann
 *
 * <b>GitHub</b>
-* {{company}}
 ```
 
 View:
@@ -280,12 +278,91 @@ Output:
 
 ### Comments
 
-```html
-<h1>Today{{ [@@] I m a comment }}.</h1>
+```
+Today{{ [@@] I m a comment }}
+Yesterday{{ [@@]
+I m a comment
+On multiple lines
+}}
 ```
 
 Will render as follows:
 
-```html
-<h1>Today.</h1>
+```
+Today
+Yesterday
+```
+
+### Custom delimiters
+
+define custom delimiters:
+
+```js
+muswish.customDelimiters("<%", "%>");
+```
+
+template:
+
+```
+{{ something }}
+<% something %>
+```
+
+width data:
+
+```js
+const data = { something: "Hey" };
+```
+
+output:
+
+```
+{{ something }}
+Hey
+```
+
+### Adding plugins
+
+You can add custom operation with `muswish.addPlugin` function.
+
+Example for the `for` statement:
+
+```js
+muswish.addPlugin("for", {
+  open: "FOR",
+  close: "END FOR",
+  fn: function (
+    _m: string,
+    template: string, //text content
+    content: string, //for content {{ [for] guys }} -> guys
+    data: Data, //current data of the item if we are in a for as example
+    originalData: Data, //original data
+    callback: Function //call muswish function
+  ) {
+    //allow you to get the element with the path
+    const items = getDeepObj(data, content);
+    if (!(items instanceof Array)) return "";
+    return items
+      .map((e: Data) => callback(template, e, originalData))
+      .join("\n");
+  },
+});
+```
+
+type
+
+```ts
+export type RULE = {
+  open: string;
+  close?: string;
+  multilines?: boolean;
+  fn: (
+    _m: string,
+    template: string,
+    content: string,
+    data: Data,
+    originalData: Data,
+    callback: Function
+  ) => string;
+};
 ```
