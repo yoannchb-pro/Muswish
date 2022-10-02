@@ -22,7 +22,8 @@
     "language",
     "code",
     "fast",
-    "ejs"
+    "ejs",
+    "mustachejs"
   ],
   "author": "yoannchb",
   "license": "MIT",
